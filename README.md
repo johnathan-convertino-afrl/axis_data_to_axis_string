@@ -1,18 +1,16 @@
 # AXIS DATA TO AXIS STRING
-## Converts incoming axis data to a string for ASCII output.
+### Converts incoming axis bus ASCII output.
 ---
 
    author: Jay Convertino   
    
    date: 2023.01.01  
    
-   details: Converts incoming axis data to axis string for ASCII output.  
+   details: Converts incoming axis data/user/dest to axis string for ASCII output one character at a time.  
    
    license: MIT   
    
 ---
-
-![rtl_img](./rtl.png)
 
 ### Dependencies
 #### Build
@@ -59,4 +57,4 @@ to output the total amount in the buffer. Essentially no wasted cycles.
 ### fusesoc
 
 * fusesoc_info.core created.
-* Simulation uses icarus to run data through the core.
+* Simulation uses icarus to run data through the core. No verification of data.

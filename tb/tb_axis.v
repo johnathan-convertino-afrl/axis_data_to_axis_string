@@ -28,15 +28,15 @@
 
 `timescale 1 ns/10 ps
 
-module tb_axis;
-  //parameter or local param bus, user and dest width? and files as well? 
+module tb_axis #(
+  parameter IN_FILE_NAME = "in.bin",
+  parameter OUT_FILE_NAME = "out.bin",
+  parameter RAND_READY = 0
+  );
   
   localparam BUS_WIDTH  = 1;
   localparam USER_WIDTH = 4;
   localparam DEST_WIDTH = 4;
-  
-  localparam CLK_PERIOD = 500;
-  localparam RST_PERIOD = 1000;
   
   wire                      tb_dut_clk;
   wire                      tb_dut_rstn;
@@ -47,6 +47,7 @@ module tb_axis;
   wire                      tb_dut_last;
   wire [USER_WIDTH-1:0]     tb_dut_user;
   wire [DEST_WIDTH-1:0]     tb_dut_dest;
+  wire                      tb_eof;
   
   wire                      tb_stim_clk;
   wire                      tb_stim_rstn;
@@ -87,7 +88,7 @@ module tb_axis;
     .BUS_WIDTH(BUS_WIDTH),
     .USER_WIDTH(USER_WIDTH),
     .DEST_WIDTH(DEST_WIDTH),
-    .FILE("in.bin")
+    .FILE(IN_FILE_NAME)
   ) slave_axis_stim (
     // output to slave
     .m_axis_aclk(tb_dut_clk),
@@ -98,7 +99,8 @@ module tb_axis;
     .m_axis_tkeep(tb_stim_keep),
     .m_axis_tlast(tb_stim_last),
     .m_axis_tuser(tb_stim_user),
-    .m_axis_tdest(tb_stim_dest)
+    .m_axis_tdest(tb_stim_dest),
+    .eof(tb_eof)
   );
   
   axis_data_to_axis_string #(
@@ -132,7 +134,8 @@ module tb_axis;
     .BUS_WIDTH(BUS_WIDTH),
     .USER_WIDTH(USER_WIDTH),
     .DEST_WIDTH(DEST_WIDTH),
-    .FILE("out.txt")
+    .RAND_READY(RAND_READY),
+    .FILE(OUT_FILE_NAME)
   ) master_axis_stim (
     // write
     .s_axis_aclk(tb_dut_clk),
@@ -143,7 +146,8 @@ module tb_axis;
     .s_axis_tkeep({BUS_WIDTH{1'b1}}),
     .s_axis_tlast(1'b0),
     .s_axis_tuser(tb_dut_user),
-    .s_axis_tdest(tb_dut_dest)
+    .s_axis_tdest(tb_dut_dest),
+    .eof(~tb_stim_valid & tb_eof)
   );
   
 endmodule

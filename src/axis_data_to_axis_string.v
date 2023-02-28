@@ -67,8 +67,8 @@ module axis_data_to_axis_string #(
   
   integer index = 0;
   
-  // ready if next core is ready and we have output all data.
-  assign s_axis_tready = m_axis_tready & (counter == 0);
+  // ready if count is zero, this is a FWFT so no worries in pumping out data.
+  assign s_axis_tready = ((counter == 0) ? 1 & arstn : 0);
   assign m_axis_tdata  = char_buffer[STRING_LEN*8-1 -:8];
   assign m_axis_tvalid = (counter > 0 ? 1: 0);
 
