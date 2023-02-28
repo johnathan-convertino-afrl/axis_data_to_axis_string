@@ -52,7 +52,13 @@ to output the total amount in the buffer. Essentially no wasted cycles.
 #### TB
 
 * tb_axis.v
-* in.bin
+* FUSESOC TARGETS: (fusesoc run --target=sim VENDER:CORE:NAME:VERSION)
+  - sim
+  - sim_rand_data
+  - sim_rand_ready_rand_data
+  - sim_8bit_count_data
+  - sim_rand_ready_8bit_count_data
+
   
 ### fusesoc
 
