@@ -24,10 +24,12 @@ filesets:
   
 targets:
   default: &default
+    description: Default for IP intergration.
     filesets: [src, dep]
   
   sim: &sim
     <<: *default
+    description: Default simulation with const data.
     default_tool: icarus
     filesets_append: [tb, dep_tb]
     toplevel: tb_axis
@@ -38,6 +40,7 @@ targets:
       
   sim_rand_data:
     <<: *sim
+    description: Use random data for input.
     parameters:
       - IN_FILE_NAME=random.bin
       - OUT_FILE_NAME=out_random.txt
@@ -45,6 +48,7 @@ targets:
       
   sim_rand_ready_rand_data:
     <<: *sim
+    description: Random data for input, and random ready input.
     parameters:
       - IN_FILE_NAME=random.bin
       - OUT_FILE_NAME=out_random.txt
@@ -52,6 +56,7 @@ targets:
       
   sim_8bit_count_data:
     <<: *sim
+    description: Counter data input.
     parameters:
       - IN_FILE_NAME=8bit_count.bin
       - OUT_FILE_NAME=out_8bit_count.txt
@@ -59,6 +64,7 @@ targets:
       
   sim_rand_ready_8bit_count_data:
     <<: *sim
+    description: Counter data input, and random ready input.
     parameters:
       - IN_FILE_NAME=8bit_count.bin
       - OUT_FILE_NAME=out_8bit_count.txt
