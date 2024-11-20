@@ -54,13 +54,14 @@
  *
  *   aclk           - Clock for AXIS
  *   arstn          - Negative reset for AXIS
+ *   s_axis_tdata   - Input data
+ *   s_axis_tvalid  - When set active high the input data is valid
+ *   s_axis_tuser   - User data to convert.
+ *   s_axis_tdest   - Destination data to convert
+ *   s_axis_tready  - When active high the device is ready for input data.
  *   m_axis_tdata   - Output data
  *   m_axis_tvalid  - When active high the output data is valid
  *   m_axis_tready  - When set active high the output device is ready for data.
- *   s_axis_tdata   - Input data
- *   s_axis_tvalid  - When set active high the input data is valid
- *   s_axis_tready  - When active high the device is ready for input data.
- *   s_axis_tlast   - Is this the last word in the stream (active high).
  */
 module axis_data_to_axis_string #(
     parameter DELIMITER   = ";",
