@@ -1,5 +1,8 @@
 # AXIS DATA TO AXIS STRING
 ### Converts incoming axis bus ASCII output.
+
+![image](docs/manual/img/AFRL.png)
+
 ---
 
    author: Jay Convertino   
@@ -19,7 +22,13 @@
 #### Previous
   - none
 
-### Dependencies
+### DOCUMENTATION
+  For detailed usage information, please navigate to one of the following sources. They are the same, just in a different format.
+
+  - [axis_data_to_axis_string.pdf](docs/manual/axis_data_to_axis_string.pdf)
+  - [github page](https://johnathan-convertino-afrl.github.io/axis_data_to_axis_string/)
+
+### DEPENDENCIES
 #### Build
 
   - AFRL:utility:helper:1.0.0
@@ -29,17 +38,7 @@
   - AFRL:simulation:axis_stimulator
   - AFRL:simulation:clock_stimulator
 
-### IP USAGE
-#### INSTRUCTIONS
-
-All data is converted to a string with prefixs for each of the 3 input ports.  
-All strings are terminated with a single byte, and each has a delimiter between   
-them. All output characters will be feed out from the buffer till it is exhausted.   
-While the core is outputing data it will not be ready to take in any other data.  
-There is no down clock cycle time between output and input, outside of the time  
-to output the total amount in the buffer. Essentially no wasted cycles.  
-
-#### PARAMETERS
+### PARAMETERS
 
 * DELIMITER   : DEFAULT : ";"   : break value between multple strings  
 * TERMINATION : DEFAULT : "\n"  : termination value of full string from serial port, byte only. (\n DEFAULT : 0A \r DEFAULT : 0D).  
@@ -60,12 +59,12 @@ to output the total amount in the buffer. Essentially no wasted cycles.
 
 * tb_axis.v
   
-### fusesoc
+### FUSESOC
 
 * fusesoc_info.core created.
 * Simulation uses icarus to run data through the core. No verification of data.
 
-#### TARGETS
+#### Targets
 * RUN WITH: (fusesoc run --target=sim VENDER:CORE:NAME:VERSION)
   - default (for IP integration builds)
   - sim

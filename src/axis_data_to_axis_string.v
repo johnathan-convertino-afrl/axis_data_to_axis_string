@@ -1,59 +1,89 @@
 //******************************************************************************
-/// @FILE    axis_data_to_axis_string.v
-/// @AUTHOR  JAY CONVERTINO
-/// @DATE    2022.09.19
-/// @BRIEF   Parse raw binary data into ASCII string output.
-///
-/// @LICENSE MIT
-///  Copyright 2021 Jay Convertino
-///
-///  Permission is hereby granted, free of charge, to any person obtaining a copy
-///  of this software and associated documentation files (the "Software"), to 
-///  deal in the Software without restriction, including without limitation the
-///  rights to use, copy, modify, merge, publish, distribute, sublicense, and/or 
-///  sell copies of the Software, and to permit persons to whom the Software is 
-///  furnished to do so, subject to the following conditions:
-///
-///  The above copyright notice and this permission notice shall be included in 
-///  all copies or substantial portions of the Software.
-///
-///  THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR 
-///  IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, 
-///  FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-///  AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER 
-///  LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING 
-///  FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-///  IN THE SOFTWARE.
+// file:    axis_data_to_axis_string.v
+//
+// author:  JAY CONVERTINO
+//
+// date:    2022/09/19
+//
+// about:   Brief
+// Parse raw binary data into ASCII string output.
+//
+// license: License MIT
+// Copyright 2022 Jay Convertino
+//
+// Permission is hereby granted, free of charge, to any person obtaining a copy
+// of this software and associated documentation files (the "Software"), to
+// deal in the Software without restriction, including without limitation the
+// rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+// sell copies of the Software, and to permit persons to whom the Software is
+// furnished to do so, subject to the following conditions:
+//
+// The above copyright notice and this permission notice shall be included in
+// all copies or substantial portions of the Software.
+//
+// THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+// IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+// FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+// AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+// LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+// FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+// IN THE SOFTWARE.
+//
 //******************************************************************************
 
 `timescale 1ns/100ps
 
-/// @brief axis string to axis data module
+/*
+ * Module: axis_data_to_axis_string
+ *
+ * Parse raw binary data into ASCII string output.
+ *
+ * Parameters:
+ *
+ *   DELIMITER   - break value between multple strings
+ *   TERMINATION - termination value of full string from serial port, byte only. (\n = 0A \r = 0D).
+ *   SBUS_WIDTH  - bus width of master (data) output
+ *   USER_WIDTH  - user width of master bus, only in 4 bit nibbles, and at least 4 bits.
+ *   DEST_WIDTH  - dest width of master bus, only in 4 bit nibbles, and at least 4 bits.
+ *   PREFIX_LEN  - length of following prefix strings.
+ *   DATA_PREFIX - prefix for data hex strings
+ *   DEST_PREFIX - prefix for destination hex strings
+ *   USER_PREFIX - prefix for user hex strings
+ *
+ * Ports:
+ *
+ *   aclk           - Clock for AXIS
+ *   arstn          - Negative reset for AXIS
+ *   m_axis_tdata   - Output data
+ *   m_axis_tvalid  - When active high the output data is valid
+ *   m_axis_tready  - When set active high the output device is ready for data.
+ *   s_axis_tdata   - Input data
+ *   s_axis_tvalid  - When set active high the input data is valid
+ *   s_axis_tready  - When active high the device is ready for input data.
+ *   s_axis_tlast   - Is this the last word in the stream (active high).
+ */
 module axis_data_to_axis_string #(
-    parameter DELIMITER   = ";",        ///< break value between multple strings
-    parameter TERMINATION = "\n",       ///< termination value of full string from serial port, byte only. (\n = 0A \r = 0D).
-    parameter SBUS_WIDTH  = 1,          ///< bus width of master (data) output
-    parameter USER_WIDTH  = 4,          ///< user width of master bus, only in 4 bit nibbles, and at least 4 bits.
-    parameter DEST_WIDTH  = 4,          ///< dest width of master bus, only in 4 bit nibbles, and at least 4 bits.
-    parameter PREFIX_LEN  = 1,          ///< length of following prefix strings.
-    parameter DATA_PREFIX = "#",        ///< prefix for data hex strings
-    parameter DEST_PREFIX = "&",        ///< prefix for destination hex strings
-    parameter USER_PREFIX = "*"         ///< prefix for user hex strings
+    parameter DELIMITER   = ";",
+    parameter TERMINATION = "\n",
+    parameter SBUS_WIDTH  = 1,
+    parameter USER_WIDTH  = 4,
+    parameter DEST_WIDTH  = 4,
+    parameter PREFIX_LEN  = 1,
+    parameter DATA_PREFIX = "#",
+    parameter DEST_PREFIX = "&",
+    parameter USER_PREFIX = "*"
   )
   (
-    //axi streaming clock and reset.
-    input aclk,
-    input arstn,
-    //slave input axis
-    input [(SBUS_WIDTH*8)-1:0] s_axis_tdata,
-    input                      s_axis_tvalid,
-    input [USER_WIDTH-1:0]     s_axis_tuser,
-    input [DEST_WIDTH-1:0]     s_axis_tdest,
-    output                     s_axis_tready,
-    //master output axis
-    output [7:0]  m_axis_tdata,
-    output        m_axis_tvalid,
-    input         m_axis_tready
+    input                         aclk,
+    input                         arstn,
+    input   [(SBUS_WIDTH*8)-1:0]  s_axis_tdata,
+    input                         s_axis_tvalid,
+    input   [USER_WIDTH-1:0]      s_axis_tuser,
+    input   [DEST_WIDTH-1:0]      s_axis_tdest,
+    output                        s_axis_tready,
+    output  [7:0]                 m_axis_tdata,
+    output                        m_axis_tvalid,
+    input                         m_axis_tready
   );
   
   `include "util_helper_math.vh"
@@ -67,11 +97,19 @@ module axis_data_to_axis_string #(
   
   integer index = 0;
   
+  // var: s_axis_tready
   // ready if count is zero, this is a FWFT so no worries in pumping out data.
   assign s_axis_tready = ((counter == 0) ? 1 & arstn : 0);
+
+  // var: m_axis_tdata
+  // output whatever is in the character buffer.
   assign m_axis_tdata  = char_buffer[STRING_LEN*8-1 -:8];
+
+  // var: m_axis_tvalid
+  // Counter greater than 0? Valid output is available.
   assign m_axis_tvalid = (counter > 0 ? 1: 0);
 
+  // process data
   always @(posedge aclk)
   begin
     if(arstn == 1'b0) begin
