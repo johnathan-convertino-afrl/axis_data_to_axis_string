@@ -68,7 +68,6 @@
 * RUN WITH: (fusesoc run --target=sim VENDER:CORE:NAME:VERSION)
   - default (for IP integration builds)
   - sim
-  - sim_rand_data
-  - sim_rand_ready_rand_data
   - sim_8bit_count_data
   - sim_rand_ready_8bit_count_data
+  - sim_cocotb
