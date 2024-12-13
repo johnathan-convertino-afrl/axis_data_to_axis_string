@@ -11,7 +11,11 @@ filesets:
   tb:
     files:
       - tb/tb_axis.v  : { file_type: verilogSource }
-    
+
+  tb_cocotb:
+    files:
+      - tb/tb_cocotb.py : {file_type : user, copyto : .}
+      - tb/tb_cocotb.v : { file_type: verilogSource }
   dep:
     depend:
       - AFRL:utility:helper:1.0.0
@@ -38,22 +42,6 @@ targets:
       - OUT_FILE_NAME
       - RAND_READY
       
-  sim_rand_data:
-    <<: *sim
-    description: Use random data for input.
-    parameters:
-      - IN_FILE_NAME=random.bin
-      - OUT_FILE_NAME=out_random.txt
-      - RAND_READY
-      
-  sim_rand_ready_rand_data:
-    <<: *sim
-    description: Random data for input, and random ready input.
-    parameters:
-      - IN_FILE_NAME=random.bin
-      - OUT_FILE_NAME=out_random.txt
-      - RAND_READY=1
-      
   sim_8bit_count_data:
     <<: *sim
     description: Counter data input.
@@ -69,6 +57,28 @@ targets:
       - IN_FILE_NAME=8bit_count.bin
       - OUT_FILE_NAME=out_8bit_count.txt
       - RAND_READY=1
+
+  sim_cocotb:
+    <<: *default
+    description: Cocotb unit tests
+    flow: sim
+    flow_options:
+      tool: icarus
+      cocotb_module: tb_cocotb
+      timescale: 1ns/1ns
+      vcs_options: [-timescale=1ns/1ns]
+    filesets_append: [tb_cocotb]
+    toplevel: tb_cocotb
+    parameters:
+      - DELIMITER
+      - TERMINATION
+      - SBUS_WIDTH
+      - USER_WIDTH
+      - DEST_WIDTH
+      - PREFIX_LEN
+      - DATA_PREFIX
+      - DEST_PREFIX
+      - USER_PREFIX
     
 parameters:
   RAND_READY:
@@ -87,4 +97,58 @@ parameters:
     datatype    : file
     default     : out_const_data.txt
     description : output file name
+    paramtype   : vlogparam
+
+  DELIMITER:
+    datatype    : str
+    default     : ";"
+    description : break value between multple strings
+    paramtype   : vlogparam
+
+  TERMINATION:
+    datatype    : str
+    default     : "\\n"
+    description : termination value of full string from serial port, byte only. (\n = 0A \r = 0D).
+    paramtype   : vlogparam
+
+  SBUS_WIDTH:
+    datatype    : int
+    default     : 1
+    description : bus width of slave (data) input
+    paramtype   : vlogparam
+
+  USER_WIDTH:
+    datatype    : int
+    default     : 4
+    description : user width of slave bus, only in 4 bit nibbles, and at least 4 bits.
+    paramtype   : vlogparam
+
+  DEST_WIDTH:
+    datatype    : int
+    default     : 4
+    description : dest width of slave bus, only in 4 bit nibbles, and at least 4 bits.
+    paramtype   : vlogparam
+
+  PREFIX_LEN:
+    datatype    : int
+    default     : 1
+    description : length of following prefix strings.
+    paramtype   : vlogparam
+
+  DATA_PREFIX:
+    datatype    : str
+    default     : "#"
+    description : prefix for data hex strings
+    paramtype   : vlogparam
+
+  DEST_PREFIX:
+    datatype    : str
+    default     : "&"
+    description : prefix for destination hex strings
+    paramtype   : vlogparam
+
+  USER_PREFIX:
+    datatype    : str
+    default     : "*"
+    description : prefix for user hex strings
     paramtype   : vlogparam

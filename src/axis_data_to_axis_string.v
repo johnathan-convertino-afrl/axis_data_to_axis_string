@@ -42,9 +42,9 @@
  *
  *   DELIMITER   - break value between multple strings
  *   TERMINATION - termination value of full string from serial port, byte only. (\n = 0A \r = 0D).
- *   SBUS_WIDTH  - bus width of master (data) output
- *   USER_WIDTH  - user width of master bus, only in 4 bit nibbles, and at least 4 bits.
- *   DEST_WIDTH  - dest width of master bus, only in 4 bit nibbles, and at least 4 bits.
+ *   SBUS_WIDTH  - bus width of slave (data) input
+ *   USER_WIDTH  - user width of slave bus, only in 4 bit nibbles, and at least 4 bits.
+ *   DEST_WIDTH  - dest width of slave bus, only in 4 bit nibbles, and at least 4 bits.
  *   PREFIX_LEN  - length of following prefix strings.
  *   DATA_PREFIX - prefix for data hex strings
  *   DEST_PREFIX - prefix for destination hex strings

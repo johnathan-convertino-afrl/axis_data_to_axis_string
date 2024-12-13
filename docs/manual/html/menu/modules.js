@@ -1,1 +1,1 @@
-﻿NDMenu.OnSectionLoaded("modules.js",[[1,"axis_data_to_axis_string"]]);
+﻿NDMenu.OnSectionLoaded("modules.js",[[1,"axis_data_to_axis_string"],[1,"clk_stim"],[1,"dut"],[1,"master_axis_stim"],[1,"slave_axis_stim"],[1,"tb_axis"],[1,"tb_cocotb"]]);
