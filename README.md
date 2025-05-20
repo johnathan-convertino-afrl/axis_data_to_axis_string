@@ -28,16 +28,6 @@
   - [axis_data_to_axis_string.pdf](docs/manual/axis_data_to_axis_string.pdf)
   - [github page](https://johnathan-convertino-afrl.github.io/axis_data_to_axis_string/)
 
-### DEPENDENCIES
-#### Build
-
-  - AFRL:utility:helper:1.0.0
-  
-#### Simulation
-
-  - AFRL:simulation:axis_stimulator
-  - AFRL:simulation:clock_stimulator
-
 ### PARAMETERS
 
 * DELIMITER   : DEFAULT : ";"   : break value between multple strings  
@@ -67,6 +57,7 @@
 #### Targets
 * RUN WITH: (fusesoc run --target=sim VENDER:CORE:NAME:VERSION)
   - default (for IP integration builds)
+  - lint
   - sim
   - sim_8bit_count_data
   - sim_rand_ready_8bit_count_data
