@@ -62,6 +62,7 @@
  *   m_axis_tdata   - Output data
  *   m_axis_tvalid  - When active high the output data is valid
  *   m_axis_tready  - When set active high the output device is ready for data.
+ *
  */
 module axis_data_to_axis_string #(
     parameter DELIMITER   = ";",
